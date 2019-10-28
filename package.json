@@ -12,7 +12,7 @@
     "dev": "node build/dev-server.js",
     "gh": "npm run example && node build/deploy",
     "lint": "eslint --ext .js,.vue src",
-    "release": "npm run lint && webpack --progress --hide-modules --config  ./build/webpack.release.js && webpack --progress --hide-modules --config  ./build/webpack.release.min.js"
+    "release": "webpack --progress --hide-modules --config  ./build/webpack.release.js && webpack --progress --hide-modules --config  ./build/webpack.release.min.js"
   },
   "repository": {
     "type": "git",
@@ -54,13 +54,13 @@
     "url-loader": "^0.5.7",
     "vue": "^2.5.16",
     "vue-hot-reload-api": "^1.3.x",
-    "vue-loader": "^13.7.1",
+    "vue-loader": "^14.2.2",
     "vue-style-loader": "^3.1.2",
     "vue-template-compiler": "^2.5.16",
     "webpack": "^3.11.0",
     "webpack-dev-middleware": "^1.12.2",
     "webpack-hot-middleware": "^2.22.1",
-    "webpack-merge": "^4.1.2"
+    "webpack-merge": "^4.2.2"
   },
   "license": "MIT"
 }

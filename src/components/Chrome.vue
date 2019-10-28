@@ -24,8 +24,9 @@
         <div class="vc-chrome-fields" v-show="fieldsIndex === 0">
           <!-- hex -->
           <div class="vc-chrome-field">
+            {{colors.hex8}}
             <ed-in v-if="!hasAlpha" label="hex" :value="colors.hex" @change="inputChange"></ed-in>
-            <ed-in v-if="hasAlpha" label="hex" :value="colors.hex8" @change="inputChange"></ed-in>
+            <ed-in v-if="hasAlpha" label="hex" :value="colors.hex" @change="inputChange"></ed-in>
           </div>
         </div>
         <div class="vc-chrome-fields" v-show="fieldsIndex === 1">
@@ -56,6 +57,20 @@
           </div>
           <div class="vc-chrome-field" v-if="!disableAlpha">
             <ed-in label="a" :value="colors.a" :arrow-offset="0.01" :max="1" @change="inputChange"></ed-in>
+          </div>
+        </div>
+        <div class="vc-chrome-fields" v-show="fieldsIndex === 3">
+          <div class="vc-chrome-field">
+            <ed-in label="c" :value="colors.cmyk[0]" @change="inputChange"></ed-in>
+          </div>
+          <div class="vc-chrome-field">
+            <ed-in label="m" :value="colors.cmyk[1]" @change="inputChange"></ed-in>
+          </div>
+          <div class="vc-chrome-field">
+            <ed-in label="y" :value="colors.cmyk[2]" @change="inputChange"></ed-in>
+          </div>
+          <div class="vc-chrome-field">
+            <ed-in label="k" :value="colors.cmyk[3]" @change="inputChange"></ed-in>
           </div>
         </div>
         <!-- btn -->
@@ -106,7 +121,7 @@ export default {
   },
   data () {
     return {
-      fieldsIndex: 0,
+      fieldsIndex: 1,
       highlight: false
     }
   },
@@ -128,6 +143,12 @@ export default {
     }
   },
   methods: {
+    cmyk2RGB(CMYK) {
+      let red = 255 * (1 - CMYK[0] / 100) * (1 - CMYK[3] / 100);
+      let green = 255 * (1 - CMYK[1] / 100) * (1 - CMYK[3] / 100);
+      let blue = 255 * (1 - CMYK[2] / 100) * (1 - CMYK[3] / 100);
+      return [Math.round(red), Math.round(green), Math.round(blue)];
+    },
     childChange (data) {
       this.colorChange(data)
     },
@@ -140,6 +161,24 @@ export default {
           hex: data.hex,
           source: 'hex'
         })
+      } else if (data.c || data.m || data.y || data.k) {
+        if (arguments[0] >= 100) {
+          arguments[0] = 100;
+        }
+        let newCMYK = [
+          parseInt(data.c) || this.colors.cmyk[0],
+          parseInt(data.m) || this.colors.cmyk[1],
+          parseInt(data.y) || this.colors.cmyk[2],
+          parseInt(data.k) || this.colors.cmyk[3]
+        ];
+        let newRGB = this.cmyk2RGB(newCMYK);
+        this.colorChange({
+          r: newRGB[0],
+          g: newRGB[1],
+          b: newRGB[2],
+          a: newRGB[3],
+          source: "rgba"
+        });
       } else if (data.r || data.g || data.b || data.a) {
         this.colorChange({
           r: data.r || this.colors.rgba.r,
@@ -161,7 +200,7 @@ export default {
       }
     },
     toggleViews () {
-      if (this.fieldsIndex >= 2) {
+      if (this.fieldsIndex >= 3) {
         this.fieldsIndex = 0
         return
       }
